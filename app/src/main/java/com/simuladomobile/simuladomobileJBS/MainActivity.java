@@ -11,6 +11,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.simuladomobile.simuladomobileJBS.databinding.ActivityMainBinding;
+import com.simuladomobile.simuladomobileJBS.model.Usuario;
+import com.simuladomobile.simuladomobileJBS.repository.UsuarioRepository;
 import com.simuladomobile.simuladomobileJBS.model.RegistroCarro;
 import com.simuladomobile.simuladomobileJBS.model.Usuario;
 import com.simuladomobile.simuladomobileJBS.repository.RegistroCarroRepository;
