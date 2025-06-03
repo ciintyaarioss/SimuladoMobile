@@ -11,6 +11,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.simuladomobile.simuladomobileJBS.databinding.ActivityMainBinding;
+import com.simuladomobile.simuladomobileJBS.model.Usuario;
+import com.simuladomobile.simuladomobileJBS.repository.UsuarioRepository;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
+//        UsuarioRepository repository = new UsuarioRepository();
+//        repository.save(new Usuario("useraleatorio", "email@gmail.com", "12", true));
     }
 
 }
