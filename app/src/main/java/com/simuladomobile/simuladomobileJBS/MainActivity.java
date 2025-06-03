@@ -13,6 +13,12 @@ import androidx.navigation.ui.NavigationUI;
 import com.simuladomobile.simuladomobileJBS.databinding.ActivityMainBinding;
 import com.simuladomobile.simuladomobileJBS.model.Usuario;
 import com.simuladomobile.simuladomobileJBS.repository.UsuarioRepository;
+import com.simuladomobile.simuladomobileJBS.model.RegistroCarro;
+import com.simuladomobile.simuladomobileJBS.model.Usuario;
+import com.simuladomobile.simuladomobileJBS.repository.RegistroCarroRepository;
+import com.simuladomobile.simuladomobileJBS.repository.UsuarioRepository;
+
+import java.time.LocalDate;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,8 +41,10 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-//        UsuarioRepository repository = new UsuarioRepository();
-//        repository.save(new Usuario("useraleatorio", "email@gmail.com", "12", true));
+//        RegistroCarroRepository registroCarroRepository = new RegistroCarroRepository();
+//        registroCarroRepository.save(
+//                new RegistroCarro(LocalDate.now(), LocalDate.of(2025, 12, 30), "ABC1234")
+//        );
     }
 
 }
