@@ -1,4 +1,4 @@
-package com.simuladomobile.simuladomobileJBS;
+package com.simuladomobile.simuladomobileJBS.ui.activities;
 
 import android.os.Bundle;
 
@@ -10,15 +10,8 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.simuladomobile.simuladomobileJBS.R;
 import com.simuladomobile.simuladomobileJBS.databinding.ActivityMainBinding;
-import com.simuladomobile.simuladomobileJBS.model.Usuario;
-import com.simuladomobile.simuladomobileJBS.repository.UsuarioRepository;
-import com.simuladomobile.simuladomobileJBS.model.RegistroCarro;
-import com.simuladomobile.simuladomobileJBS.model.Usuario;
-import com.simuladomobile.simuladomobileJBS.repository.RegistroCarroRepository;
-import com.simuladomobile.simuladomobileJBS.repository.UsuarioRepository;
-
-import java.time.LocalDate;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,10 +28,9 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_administrador)
+                R.id.navigation_registrar_carro, R.id.navigation_administrador)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
 //        RegistroCarroRepository registroCarroRepository = new RegistroCarroRepository();

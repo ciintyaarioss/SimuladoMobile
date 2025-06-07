@@ -1,4 +1,4 @@
-package com.simuladomobile.simuladomobileJBS;
+package com.simuladomobile.simuladomobileJBS.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.simuladomobile.simuladomobileJBS.R;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -25,9 +27,9 @@ public class SplashActivity extends AppCompatActivity {
         });
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
             finish();
-        }, 4000);
+        }, 2000);
 
     }
 }

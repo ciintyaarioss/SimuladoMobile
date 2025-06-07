@@ -2,34 +2,38 @@ package com.simuladomobile.simuladomobileJBS.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Date;
 
 public class RegistroCarro implements Serializable {
-    private LocalDate dataSaida;
-    private LocalDate dataEntrada;
+    private Date dataSaida;
+    private Date dataEntrada;
     private String placa;
+
+    private String usuarioEmail;
 
     public RegistroCarro() {
 
     }
-    public RegistroCarro(LocalDate dataSaida, LocalDate dataEntrada, String placa) {
+    public RegistroCarro(Date dataSaida, Date dataEntrada, String placa, String usuarioEmail) {
         this.dataSaida = dataSaida;
         this.dataEntrada = dataEntrada;
         this.placa = placa;
+        this.usuarioEmail = usuarioEmail;
     }
 
-    public LocalDate getDataSaida() {
+    public Date getDataSaida() {
         return dataSaida;
     }
 
-    public void setDataSaida(LocalDate dataSaida) {
+    public void setDataSaida(Date dataSaida) {
         this.dataSaida = dataSaida;
     }
 
-    public LocalDate getDataEntrada() {
+    public Date getDataEntrada() {
         return dataEntrada;
     }
 
-    public void setDataEntrada(LocalDate dataEntrada) {
+    public void setDataEntrada(Date dataEntrada) {
         this.dataEntrada = dataEntrada;
     }
 
@@ -39,5 +43,13 @@ public class RegistroCarro implements Serializable {
 
     public void setPlaca(String placa) {
         this.placa = placa;
+    }
+
+    public String getUsuarioEmail() {
+        return usuarioEmail;
+    }
+
+    public void setUsuarioEmail(String usuarioEmail) {
+        this.usuarioEmail = usuarioEmail;
     }
 }
