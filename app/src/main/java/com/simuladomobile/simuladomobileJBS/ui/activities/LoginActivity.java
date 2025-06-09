@@ -1,8 +1,8 @@
 package com.simuladomobile.simuladomobileJBS.ui.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,8 +15,6 @@ import com.simuladomobile.simuladomobileJBS.R;
 public class LoginActivity extends AppCompatActivity {
 
     private TextInputEditText edtEmail, edtSenha;
-    private Button btnLogin;
-    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,16 +23,20 @@ public class LoginActivity extends AppCompatActivity {
 
         edtEmail = findViewById(R.id.edtEmail);
         edtSenha = findViewById(R.id.edtSenha);
-        btnLogin = findViewById(R.id.btnLogin);
 
-        db = FirebaseFirestore.getInstance();
-
-        btnLogin.setOnClickListener(v -> fazerLogin());
+        findViewById(R.id.btnLogin).setOnClickListener(v -> fazerLogin());
     }
 
     private void fazerLogin() {
         String email = edtEmail.getText().toString();
         String senha = edtSenha.getText().toString();
+
+        if(email.isEmpty() || senha.isEmpty()) {
+            Toast.makeText(this, "Preencha email e senha", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Query query = db.collection("usuarios")
                 .whereEqualTo("email", email)
@@ -42,11 +44,14 @@ public class LoginActivity extends AppCompatActivity {
 
         query.get().addOnSuccessListener(queryDocumentSnapshots -> {
             if (!queryDocumentSnapshots.isEmpty()) {
+                SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
+                prefs.edit().putString("user_email", email).apply();
+
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             } else {
-                Toast.makeText(this, "E-mail ou senha inválidos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "E-mail ou senha inválidos", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(e ->
                 Toast.makeText(this, "Erro ao conectar: " + e.getMessage(), Toast.LENGTH_LONG).show()
