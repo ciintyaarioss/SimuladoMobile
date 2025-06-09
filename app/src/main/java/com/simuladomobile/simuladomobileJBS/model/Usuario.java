@@ -5,6 +5,8 @@ public class Usuario implements Serializable {
     private String nome;
     private String email;
     private String senha;
+    private boolean isAdmin;
+
 
 
     public Usuario(String nome, String email, String senha, boolean isAdmin) {
@@ -37,6 +39,14 @@ public class Usuario implements Serializable {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 
 }
