@@ -3,17 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    android:label="RegistrarCarro"
+    app:startDestination="@id/navigation_registrar_carro">
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.simuladomobile.simuladomobileJBS.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
-    <fragment
         android:id="@+id/navigation_administrador"
-        android:name="com.simuladomobile.simuladomobileJBS.Administrador"
+        android:name="com.simuladomobile.simuladomobileJBS.ui.fragments.Administrador"
         android:label="navigation_administrador"
         tools:layout="@layout/navigation_administrador" />
+    <fragment
+        android:id="@+id/navigation_registrar_carro"
+        android:name="com.simuladomobile.simuladomobileJBS.ui.fragments.RegistrarCarro"
+        android:label="RegistrarCarro"
+        tools:layout="@layout/fragment_navigation_registrar_carro" />
 
 </navigation>

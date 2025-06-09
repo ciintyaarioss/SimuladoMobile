@@ -7,33 +7,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".SplashActivity">
+    tools:context=".ui.activities.SplashActivity">
 
     <ImageView
         android:id="@+id/splashLogo"
-        android:layout_width="189dp"
-        android:layout_height="181dp"
+        android:layout_width="241dp"
+        android:layout_height="222dp"
         android:layout_marginBottom="16dp"
         android:contentDescription="@string/app_name"
         android:src="@drawable/splash_logo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.443" />
+        app:layout_constraintVertical_bias="0.382" />
 
     <TextView
         android:id="@+id/splashText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
-        android:letterSpacing="0.1"
+        android:letterSpacing="0"
         android:text="Estacionamento da JBS"
         android:textColor="#2E2B78"
-        android:textSize="20sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/splashLogo" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
