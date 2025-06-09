@@ -8,11 +8,11 @@ public class Usuario implements Serializable {
     private boolean isAdmin;
 
 
+
     public Usuario(String nome, String email, String senha, boolean isAdmin) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
-        this.isAdmin = isAdmin;
     }
 
     public Usuario() {}
