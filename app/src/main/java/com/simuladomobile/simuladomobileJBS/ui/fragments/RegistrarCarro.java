@@ -63,7 +63,31 @@ public class RegistrarCarro extends Fragment {
 
         buttonRegistrarEntrada.setOnClickListener(v -> registrarEntrada());
 
-        carregarRegistros();
+
+        repository.makeRealtimeListener((lista, error) -> {
+            if (!isAdded() || getContext() == null) {
+                return;
+            }
+            if (error != null) {
+                Toast.makeText(getContext(), "Erro ao carregar registros", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (lista == null || lista.isEmpty()) {
+                Toast.makeText(getContext(), "Nenhum registro encontrado", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            lista.sort((o1, o2) -> o2.getDataEntrada().compareTo(o1.getDataEntrada()));
+            if(getActivity() != null) {
+                getActivity().runOnUiThread(() ->
+                {
+                    if (adapter != null) {
+                        adapter.updateData(lista);
+                    }
+                });
+            }
+
+        });
 
         return view;
     }
@@ -131,4 +155,6 @@ public class RegistrarCarro extends Fragment {
                 .setNegativeButton("Não", null)
                 .show();
     }
+
+
 }
