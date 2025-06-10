@@ -1,8 +1,9 @@
 package com.simuladomobile.simuladomobileJBS.ui.fragments;
 
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -137,10 +139,10 @@ public class RegistrarCarro extends Fragment {
             return;
         }
 
-        new AlertDialog.Builder(getContext())
-                .setTitle("Registrar saída")
-                .setMessage("Deseja indicar a saída do veículo?")
-                .setPositiveButton("Sim", (dialog, which) -> {
+        customDialogConfirmar(
+                "Registrar saída",
+                "Deseja indicar a saída do veículo?",
+                () -> {
                     registro.setDataSaida(new Date());
                     repository.updateByPlaca(registro.getPlaca(), registro)
                             .addOnSuccessListener(aVoid -> {
@@ -149,10 +151,45 @@ public class RegistrarCarro extends Fragment {
                             })
                             .addOnFailureListener(e ->
                                     Toast.makeText(getContext(), "Erro ao registrar saída", Toast.LENGTH_SHORT).show());
-                })
-                .setNegativeButton("Não", null)
-                .show();
+                },
+                null
+        );
     }
 
+    private void customDialogConfirmar(String titulo, String mensagem, Runnable confirmarAction, Runnable cancelarAction) {
+        Dialog caixaAlert = new Dialog(getContext());
+        caixaAlert.setContentView(R.layout.dialog_confirm_register);
+
+        if (caixaAlert.getWindow() != null) {
+            caixaAlert.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            caixaAlert.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+        caixaAlert.setCancelable(false);
+
+        TextView tituloAlert = caixaAlert.findViewById(R.id.titulo);
+        TextView mensagemAlert = caixaAlert.findViewById(R.id.mensagem);
+        Button confirmarAlert = caixaAlert.findViewById(R.id.confirmar);
+        Button cancelarAlert = caixaAlert.findViewById(R.id.ok);
+
+        tituloAlert.setText(titulo);
+        mensagemAlert.setText(mensagem);
+
+        confirmarAlert.setOnClickListener(view -> {
+            caixaAlert.dismiss();
+            if (confirmarAction != null) {
+                confirmarAction.run();
+            }
+        });
+
+        cancelarAlert.setOnClickListener(view -> {
+            caixaAlert.dismiss();
+            if (cancelarAction != null) {
+                cancelarAction.run();
+            }
+        });
+
+        caixaAlert.show();
+    }
 
 }
