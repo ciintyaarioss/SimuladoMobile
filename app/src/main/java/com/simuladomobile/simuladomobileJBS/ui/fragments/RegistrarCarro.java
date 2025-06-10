@@ -17,9 +17,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.simuladomobile.simuladomobileJBS.R;
 import com.simuladomobile.simuladomobileJBS.adapter.RegistroCarroAdapter;
 import com.simuladomobile.simuladomobileJBS.model.RegistroCarro;
@@ -40,7 +37,8 @@ public class RegistrarCarro extends Fragment {
 
     private String usuarioEmail;
 
-    public RegistrarCarro() {}
+    public RegistrarCarro() {
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -78,7 +76,7 @@ public class RegistrarCarro extends Fragment {
                 return;
             }
             lista.sort((o1, o2) -> o2.getDataEntrada().compareTo(o1.getDataEntrada()));
-            if(getActivity() != null) {
+            if (getActivity() != null) {
                 getActivity().runOnUiThread(() ->
                 {
                     if (adapter != null) {
@@ -105,31 +103,31 @@ public class RegistrarCarro extends Fragment {
         registro.setDataEntrada(new Date());
         registro.setUsuarioEmail(usuarioEmail);
 
-        repository.save(registro)
-                .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(getContext(), "Entrada registrada com sucesso", Toast.LENGTH_SHORT).show();
-                    editTextPlaca.setText("");
-                    carregarRegistros();
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(getContext(), "Erro ao registrar entrada", Toast.LENGTH_SHORT).show());
+
+        repository.save(registro, task ->
+            task.addOnSuccessListener(documentReference -> {
+                        Toast.makeText(getContext(), "Entrada registrada com sucesso", Toast.LENGTH_SHORT).show();
+                        editTextPlaca.setText("");
+                        carregarRegistros();
+                    })
+                    .addOnFailureListener(e ->
+                            Toast.makeText(getContext(), "Erro ao registrar entrada", Toast.LENGTH_SHORT).show())
+
+        );
     }
 
     private void carregarRegistros() {
-        FirebaseFirestore.getInstance()
-                .collection(RegistroCarroRepository.collectionName)
-                .orderBy("dataEntrada", Query.Direction.DESCENDING)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    registroCarroList.clear();
-                    for (QueryDocumentSnapshot doc : querySnapshot) {
-                        RegistroCarro registro = doc.toObject(RegistroCarro.class);
-                        registroCarroList.add(registro);
-                    }
-                    adapter.notifyDataSetChanged();
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(getContext(), "Erro ao carregar registros", Toast.LENGTH_SHORT).show());
+        repository.getAll(lista -> {
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() ->
+                    {
+                        lista.sort((o1, o2) -> o2.getDataEntrada().compareTo(o1.getDataEntrada()));
+                        adapter.updateData(lista);
+                    });
+                }
+            },
+            error -> Toast.makeText(getContext(), "Erro ao carregar registros", Toast.LENGTH_SHORT).show()
+        );
 
     }
 
@@ -144,7 +142,7 @@ public class RegistrarCarro extends Fragment {
                 .setMessage("Deseja indicar a saída do veículo?")
                 .setPositiveButton("Sim", (dialog, which) -> {
                     registro.setDataSaida(new Date());
-                    repository.update(registro.getPlaca(), registro)
+                    repository.updateByPlaca(registro.getPlaca(), registro)
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(getContext(), "Saída registrada", Toast.LENGTH_SHORT).show();
                                 carregarRegistros();

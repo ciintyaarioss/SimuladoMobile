@@ -7,15 +7,16 @@ public class Usuario implements Serializable {
     private String senha;
     private boolean isAdmin;
 
-
+    public Usuario() {}
 
     public Usuario(String nome, String email, String senha, boolean isAdmin) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
+        this.isAdmin = isAdmin;
+
     }
 
-    public Usuario() {}
 
     public String getNome() {
         return nome;

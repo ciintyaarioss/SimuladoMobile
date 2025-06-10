@@ -1,15 +1,15 @@
 package com.simuladomobile.simuladomobileJBS.model;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Date;
 
 public class RegistroCarro implements Serializable {
     private Date dataSaida;
     private Date dataEntrada;
     private String placa;
-
     private String usuarioEmail;
+
+    private transient String documentId;
 
     public RegistroCarro() {
 
@@ -49,6 +49,9 @@ public class RegistroCarro implements Serializable {
         return usuarioEmail;
     }
 
+    public String getDocumentId() {
+        return documentId;
+    }
     public void setUsuarioEmail(String usuarioEmail) {
         this.usuarioEmail = usuarioEmail;
     }

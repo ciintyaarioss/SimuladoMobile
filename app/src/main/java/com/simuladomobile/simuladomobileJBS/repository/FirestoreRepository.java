@@ -8,9 +8,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -48,14 +48,14 @@ public abstract class FirestoreRepository<T extends Serializable> {
         delete(documentId, result -> {});
     }
 
-    public void getAll(Consumer<List<T>> receiver) {
+    public void getAll(Consumer<List<T>> receiver, com.google.android.gms.tasks.OnFailureListener onErrorListener) {
         getCollection().get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 receiver.accept(task.getResult().toObjects(this.clazz));
             } else {
                 receiver.accept(null);
             }
-        });
+        }).addOnFailureListener(onErrorListener);
     }
 
     public void getById(String documentId, Consumer<T> receiver) {
@@ -66,6 +66,24 @@ public abstract class FirestoreRepository<T extends Serializable> {
                 receiver.accept(null);
             }
         });
+    }
+
+    protected <V> Task<Void> update(String key, V value, T object) throws RuntimeException {
+        return FirebaseFirestore.getInstance()
+                .collection(getCollectionName())
+                .whereEqualTo(key, value)
+                .limit(1)
+                .get()
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful() || task.getResult().isEmpty()) {
+                        throw Objects.requireNonNull(task.getException());
+                    }
+                    String docId = task.getResult().getDocuments().get(0).getId();
+                    return FirebaseFirestore.getInstance()
+                            .collection(getCollectionName())
+                            .document(docId)
+                            .set(object);
+                });
     }
 
     @FunctionalInterface

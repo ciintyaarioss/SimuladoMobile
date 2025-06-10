@@ -19,27 +19,7 @@ public class RegistroCarroRepository extends FirestoreRepository<RegistroCarro> 
         return collectionName;
     }
 
-    public Task<DocumentReference> save(RegistroCarro registroCarro) {
-        return FirebaseFirestore.getInstance()
-                .collection(getCollectionName())
-                .add(registroCarro);
-    }
-
-    public Task<Void> update(String placa, RegistroCarro registroCarro) {
-        return FirebaseFirestore.getInstance()
-                .collection(getCollectionName())
-                .whereEqualTo("placa", placa)
-                .limit(1)
-                .get()
-                .continueWithTask(task -> {
-                    if (!task.isSuccessful() || task.getResult().isEmpty()) {
-                        throw task.getException();
-                    }
-                    String docId = task.getResult().getDocuments().get(0).getId();
-                    return FirebaseFirestore.getInstance()
-                            .collection(getCollectionName())
-                            .document(docId)
-                            .set(registroCarro);
-                });
+    public Task<Void> updateByPlaca(String placa, RegistroCarro registroCarro) {
+        return super.update("placa", placa, registroCarro);
     }
 }
