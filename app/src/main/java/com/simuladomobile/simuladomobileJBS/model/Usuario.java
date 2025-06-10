@@ -7,7 +7,7 @@ public class Usuario implements Serializable {
     private String senha;
     private Boolean isAdmin;
 
-
+    public Usuario() {}
 
     public Usuario(String nome, String email, String senha, Boolean isAdmin) {
         this.nome = nome;
@@ -16,7 +16,6 @@ public class Usuario implements Serializable {
         this.isAdmin = isAdmin;
     }
 
-    public Usuario() {}
 
     public String getNome() {
         return nome;
