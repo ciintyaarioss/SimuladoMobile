@@ -9,7 +9,6 @@ public class RegistroCarro implements Serializable {
     private String placa;
     private String usuarioEmail;
 
-    private transient String documentId;
 
     public RegistroCarro() {
 
@@ -49,9 +48,6 @@ public class RegistroCarro implements Serializable {
         return usuarioEmail;
     }
 
-    public String getDocumentId() {
-        return documentId;
-    }
     public void setUsuarioEmail(String usuarioEmail) {
         this.usuarioEmail = usuarioEmail;
     }

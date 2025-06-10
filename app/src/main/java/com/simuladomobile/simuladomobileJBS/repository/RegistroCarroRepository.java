@@ -1,8 +1,6 @@
 package com.simuladomobile.simuladomobileJBS.repository;
 
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.simuladomobile.simuladomobileJBS.model.RegistroCarro;
 
 
