@@ -1,15 +1,14 @@
 package com.simuladomobile.simuladomobileJBS.model;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Date;
 
 public class RegistroCarro implements Serializable {
     private Date dataSaida;
     private Date dataEntrada;
     private String placa;
-
     private String usuarioEmail;
+
 
     public RegistroCarro() {
 

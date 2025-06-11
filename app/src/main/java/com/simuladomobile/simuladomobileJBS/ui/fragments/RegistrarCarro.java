@@ -1,8 +1,9 @@
 package com.simuladomobile.simuladomobileJBS.ui.fragments;
 
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,9 +19,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.simuladomobile.simuladomobileJBS.R;
 import com.simuladomobile.simuladomobileJBS.adapter.RegistroCarroAdapter;
 import com.simuladomobile.simuladomobileJBS.model.RegistroCarro;
@@ -40,7 +39,8 @@ public class RegistrarCarro extends Fragment {
 
     private String usuarioEmail;
 
-    public RegistrarCarro() {}
+    public RegistrarCarro() {
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -63,7 +63,31 @@ public class RegistrarCarro extends Fragment {
 
         buttonRegistrarEntrada.setOnClickListener(v -> registrarEntrada());
 
-        carregarRegistros();
+
+        repository.makeRealtimeListener((lista, error) -> {
+            if (!isAdded() || getContext() == null) {
+                return;
+            }
+            if (error != null) {
+                Toast.makeText(getContext(), "Erro ao carregar registros", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (lista == null || lista.isEmpty()) {
+                Toast.makeText(getContext(), "Nenhum registro encontrado", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            lista.sort((o1, o2) -> o2.getDataEntrada().compareTo(o1.getDataEntrada()));
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() ->
+                {
+                    if (adapter != null) {
+                        adapter.updateData(lista);
+                    }
+                });
+            }
+
+        });
 
         return view;
     }
@@ -81,31 +105,31 @@ public class RegistrarCarro extends Fragment {
         registro.setDataEntrada(new Date());
         registro.setUsuarioEmail(usuarioEmail);
 
-        repository.save(registro)
-                .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(getContext(), "Entrada registrada com sucesso", Toast.LENGTH_SHORT).show();
-                    editTextPlaca.setText("");
-                    carregarRegistros();
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(getContext(), "Erro ao registrar entrada", Toast.LENGTH_SHORT).show());
+
+        repository.save(registro, task ->
+            task.addOnSuccessListener(documentReference -> {
+                        Toast.makeText(getContext(), "Entrada registrada com sucesso", Toast.LENGTH_SHORT).show();
+                        editTextPlaca.setText("");
+                        carregarRegistros();
+                    })
+                    .addOnFailureListener(e ->
+                            Toast.makeText(getContext(), "Erro ao registrar entrada", Toast.LENGTH_SHORT).show())
+
+        );
     }
 
     private void carregarRegistros() {
-        FirebaseFirestore.getInstance()
-                .collection(RegistroCarroRepository.collectionName)
-                .orderBy("dataEntrada", Query.Direction.DESCENDING)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    registroCarroList.clear();
-                    for (QueryDocumentSnapshot doc : querySnapshot) {
-                        RegistroCarro registro = doc.toObject(RegistroCarro.class);
-                        registroCarroList.add(registro);
-                    }
-                    adapter.notifyDataSetChanged();
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(getContext(), "Erro ao carregar registros", Toast.LENGTH_SHORT).show());
+        repository.getAll(lista -> {
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() ->
+                    {
+                        lista.sort((o1, o2) -> o2.getDataEntrada().compareTo(o1.getDataEntrada()));
+                        adapter.updateData(lista);
+                    });
+                }
+            },
+            error -> Toast.makeText(getContext(), "Erro ao carregar registros", Toast.LENGTH_SHORT).show()
+        );
 
     }
 
@@ -115,20 +139,57 @@ public class RegistrarCarro extends Fragment {
             return;
         }
 
-        new AlertDialog.Builder(getContext())
-                .setTitle("Registrar saída")
-                .setMessage("Deseja indicar a saída do veículo?")
-                .setPositiveButton("Sim", (dialog, which) -> {
+        customDialogConfirmar(
+                "Registrar saída",
+                "Deseja indicar a saída do veículo?",
+                () -> {
                     registro.setDataSaida(new Date());
-                    repository.update(registro.getPlaca(), registro)
+                    repository.updateByPlaca(registro.getPlaca(), registro)
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(getContext(), "Saída registrada", Toast.LENGTH_SHORT).show();
                                 carregarRegistros();
                             })
                             .addOnFailureListener(e ->
                                     Toast.makeText(getContext(), "Erro ao registrar saída", Toast.LENGTH_SHORT).show());
-                })
-                .setNegativeButton("Não", null)
-                .show();
+                },
+                null
+        );
     }
+
+    private void customDialogConfirmar(String titulo, String mensagem, Runnable confirmarAction, Runnable cancelarAction) {
+        Dialog caixaAlert = new Dialog(getContext());
+        caixaAlert.setContentView(R.layout.dialog_confirm_register);
+
+        if (caixaAlert.getWindow() != null) {
+            caixaAlert.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            caixaAlert.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+        caixaAlert.setCancelable(false);
+
+        TextView tituloAlert = caixaAlert.findViewById(R.id.titulo);
+        TextView mensagemAlert = caixaAlert.findViewById(R.id.mensagem);
+        Button confirmarAlert = caixaAlert.findViewById(R.id.confirmar);
+        Button cancelarAlert = caixaAlert.findViewById(R.id.ok);
+
+        tituloAlert.setText(titulo);
+        mensagemAlert.setText(mensagem);
+
+        confirmarAlert.setOnClickListener(view -> {
+            caixaAlert.dismiss();
+            if (confirmarAction != null) {
+                confirmarAction.run();
+            }
+        });
+
+        cancelarAlert.setOnClickListener(view -> {
+            caixaAlert.dismiss();
+            if (cancelarAction != null) {
+                cancelarAction.run();
+            }
+        });
+
+        caixaAlert.show();
+    }
+
 }

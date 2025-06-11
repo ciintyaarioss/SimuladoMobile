@@ -11,8 +11,8 @@
 
     <ImageView
         android:id="@+id/splashLogo"
-        android:layout_width="241dp"
-        android:layout_height="222dp"
+        android:layout_width="258dp"
+        android:layout_height="245dp"
         android:layout_marginBottom="16dp"
         android:contentDescription="@string/app_name"
         android:src="@drawable/splash_logo"
@@ -20,12 +20,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.382" />
+        app:layout_constraintVertical_bias="0.304" />
 
     <TextView
         android:id="@+id/splashText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
         android:fontFamily="sans-serif-medium"
         android:letterSpacing="0"
         android:text="Estacionamento da JBS"
@@ -33,7 +34,6 @@
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/splashLogo" />
 </androidx.constraintlayout.widget.ConstraintLayout>

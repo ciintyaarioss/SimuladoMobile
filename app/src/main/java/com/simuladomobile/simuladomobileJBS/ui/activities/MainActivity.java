@@ -9,6 +9,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.simuladomobile.simuladomobileJBS.R;
 import com.simuladomobile.simuladomobileJBS.databinding.ActivityMainBinding;
@@ -16,6 +17,8 @@ import com.simuladomobile.simuladomobileJBS.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private RecyclerView recyclerView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,5 +40,8 @@ public class MainActivity extends AppCompatActivity {
 //        registroCarroRepository.save(
 //                new RegistroCarro(LocalDate.now(), LocalDate.of(2025, 12, 30), "ABC1234")
 //        );
+
+
+
     }
 }

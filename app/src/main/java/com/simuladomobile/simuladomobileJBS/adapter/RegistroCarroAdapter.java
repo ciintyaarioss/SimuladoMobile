@@ -78,4 +78,13 @@ public class RegistroCarroAdapter extends RecyclerView.Adapter<RegistroCarroAdap
     private String formatarData(Date data) {
         return data != null ? dateFormat.format(data) : "Indisponível";
     }
+
+    public void updateData(List<RegistroCarro> registros) {
+        if( registros == null || registros.isEmpty()) {
+            return;
+        }
+        this.lista.clear();
+        this.lista.addAll(registros);
+        notifyDataSetChanged();
+    }
 }

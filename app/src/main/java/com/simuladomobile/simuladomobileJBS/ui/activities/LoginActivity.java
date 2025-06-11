@@ -3,7 +3,10 @@ package com.simuladomobile.simuladomobileJBS.ui.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,8 +19,6 @@ import com.simuladomobile.simuladomobileJBS.R;
 public class LoginActivity extends AppCompatActivity {
 
     private TextInputEditText edtEmail, edtSenha;
-    private Button btnLogin;
-    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +27,16 @@ public class LoginActivity extends AppCompatActivity {
 
         edtEmail = findViewById(R.id.edtEmail);
         edtSenha = findViewById(R.id.edtSenha);
-        findViewById(R.id.btnLogin).setOnClickListener(v -> fazerLogin());
+        findViewById(R.id.btnEntrar).setOnClickListener(v -> fazerLogin());
+
+        TextView tvCadastro = findViewById(R.id.tvCadastro);
+        tvCadastro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, CadastrarActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void fazerLogin() {
