@@ -37,8 +37,8 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewRegistros"
-            android:layout_width="385dp"
-            android:layout_height="480dp"
+            android:layout_width="374dp"
+            android:layout_height="364dp"
             android:layout_marginBottom="60dp"
             android:clipToPadding="false"
             android:contentDescription="Lista de veículos"
@@ -48,7 +48,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buttonExcluir"
-            app:layout_constraintVertical_bias="0.79" />
+            app:layout_constraintVertical_bias="1.0" />
 
         <Button
             android:id="@+id/buttonExcluir"
