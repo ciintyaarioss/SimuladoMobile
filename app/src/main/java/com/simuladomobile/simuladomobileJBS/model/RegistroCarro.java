@@ -51,4 +51,9 @@ public class RegistroCarro implements Serializable {
     public void setUsuarioEmail(String usuarioEmail) {
         this.usuarioEmail = usuarioEmail;
     }
+
+
+    public boolean hasAlreadyExited() {
+        return dataSaida != null;
+    }
 }
