@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:padding="32dp">
 
     <ImageView
@@ -50,7 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
-            android:textColor="@color/md_theme_outlineVariant"
+            android:textColor="@color/black"
             tools:layout_editor_absoluteX="31dp"
             tools:layout_editor_absoluteY="408dp" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -89,6 +90,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
+            android:textColor="@color/black"
             tools:layout_editor_absoluteX="31dp"
             tools:layout_editor_absoluteY="331dp" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -97,13 +99,13 @@
         android:id="@+id/tvCadastro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif"
         android:text="Não tem uma conta?"
         android:textStyle="bold"
-        android:fontFamily="sans-serif"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnEntrar"
-        android:layout_marginTop="16dp"
         tools:layout_editor_absoluteX="108dp"
         tools:layout_editor_absoluteY="574dp" />
 
