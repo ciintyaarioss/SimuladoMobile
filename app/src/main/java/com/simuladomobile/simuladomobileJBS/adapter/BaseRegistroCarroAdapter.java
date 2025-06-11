@@ -23,7 +23,7 @@ public abstract class BaseRegistroCarroAdapter extends RecyclerView.Adapter<Regi
         void onSaidaClick(RegistroCarro registroCarro);
     }
 
-    private List<RegistroCarro> lista;
+    protected List<RegistroCarro> lista;
     private final OnSaidaClickListener listener;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
 
