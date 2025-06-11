@@ -9,14 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.simuladomobile.simuladomobileJBS.R;
-import com.simuladomobile.simuladomobileJBS.adapter.RegistroCarroAdapter;
+import com.simuladomobile.simuladomobileJBS.adapter.RegistroCarroAdminAdapter;
 import com.simuladomobile.simuladomobileJBS.model.RegistroCarro;
 import com.simuladomobile.simuladomobileJBS.repository.RegistroCarroRepository;
 
@@ -27,7 +25,7 @@ import java.util.List;
 public class Administrador extends Fragment {
 
     private RecyclerView recyclerView;
-    private RegistroCarroAdapter adapter;
+    private RegistroCarroAdminAdapter adminAdapter;
     private List<RegistroCarro> registroCarroLista;
     private RegistroCarroRepository repository;
     private Button buttonExcluir;
@@ -69,12 +67,12 @@ public class Administrador extends Fragment {
 
         repository = new RegistroCarroRepository();
         registroCarroLista = new ArrayList<>();
-        adapter = new RegistroCarroAdapter(registroCarroLista, registro -> {
+        adminAdapter = new RegistroCarroAdminAdapter(registroCarroLista, registro -> {
 
         });
 
         recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(adminAdapter);
 
         carregarRegistros();
 
@@ -89,7 +87,7 @@ public class Administrador extends Fragment {
                         getActivity().runOnUiThread(() ->
                         {
                             lista.sort((o1, o2) -> o2.getDataEntrada().compareTo(o1.getDataEntrada()));
-                            adapter.updateData(lista);
+                            adminAdapter.updateData(lista);
                         });
                     }
                 },
