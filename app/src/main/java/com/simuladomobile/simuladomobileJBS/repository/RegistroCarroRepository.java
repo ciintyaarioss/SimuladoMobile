@@ -6,7 +6,9 @@ import com.simuladomobile.simuladomobileJBS.model.RegistroCarro;
 
 public class RegistroCarroRepository extends FirestoreRepository<RegistroCarro> {
 
+
     public static final String collectionName = "registrarCarro";
+    public static final String PLACA = "placa";
 
     public RegistroCarroRepository() {
         super(RegistroCarro.class);
@@ -18,6 +20,6 @@ public class RegistroCarroRepository extends FirestoreRepository<RegistroCarro> 
     }
 
     public Task<Void> updateByPlaca(String placa, RegistroCarro registroCarro) {
-        return super.update("placa", placa, registroCarro);
+        return super.update(PLACA, placa, registroCarro);
     }
 }

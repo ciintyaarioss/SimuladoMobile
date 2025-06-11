@@ -27,54 +27,75 @@ import com.simuladomobile.simuladomobileJBS.repository.RegistroCarroRepository;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class RegistrarCarro extends Fragment {
 
+    // Fields
     private EditText editTextPlaca;
     private Button buttonRegistrarEntrada;
     private RecyclerView recyclerView;
     private RegistroCarroAdapter adapter;
     private List<RegistroCarro> registroCarroList;
     private RegistroCarroRepository repository;
-
     private String usuarioEmail;
 
+    // Constructor
     public RegistrarCarro() {
     }
 
+    // Lifecycle Methods
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_navigation_registrar_carro, container, false);
 
+        initializeViews(view);
+        initializeRepository();
+        setupRecyclerView();
+        setupClickListeners();
+        setupRealtimeListener();
+
+        return view;
+    }
+
+    // Initialization Methods
+    private void initializeViews(View view) {
         editTextPlaca = view.findViewById(R.id.editTextPlaca);
         buttonRegistrarEntrada = view.findViewById(R.id.buttonRegistrarEntrada);
         recyclerView = view.findViewById(R.id.recyclerViewRegistros);
 
         SharedPreferences prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
         usuarioEmail = prefs.getString("user_email", "Desconhecido");
+    }
 
+    private void initializeRepository() {
         repository = new RegistroCarroRepository();
+    }
+
+    private void setupRecyclerView() {
         registroCarroList = new ArrayList<>();
         adapter = new RegistroCarroAdapter(registroCarroList, this::onSaidaClick);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
+    }
 
+    private void setupClickListeners() {
         buttonRegistrarEntrada.setOnClickListener(v -> registrarEntrada());
+    }
 
-
+    private void setupRealtimeListener() {
         repository.makeRealtimeListener((lista, error) -> {
             if (!isAdded() || getContext() == null) {
                 return;
             }
             if (error != null) {
-                Toast.makeText(getContext(), "Erro ao carregar registros", Toast.LENGTH_SHORT).show();
+                showToast("Erro ao carregar registros");
                 return;
             }
 
             if (lista == null || lista.isEmpty()) {
-                Toast.makeText(getContext(), "Nenhum registro encontrado", Toast.LENGTH_SHORT).show();
+                showToast("Nenhum registro encontrado");
                 return;
             }
             lista.sort((o1, o2) -> o2.getDataEntrada().compareTo(o1.getDataEntrada()));
@@ -86,56 +107,66 @@ public class RegistrarCarro extends Fragment {
                     }
                 });
             }
-
         });
-
-        return view;
     }
 
+    // Main Business Logic - Entry Registration
     private void registrarEntrada() {
-        String placa = editTextPlaca.getText().toString().toUpperCase().trim();
+        String placa = getPlacaInput();
+        if (!isPlacaValid(placa)) return;
 
-        if (TextUtils.isEmpty(placa)) {
-            Toast.makeText(getContext(), "Digite a placa do veículo", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        checkVehicleStatusAsync(placa)
+                .thenCompose(isParked -> {
+                    if (isParked) {
+                        showToast("Veículo ja estacionado");
+                        return CompletableFuture.completedFuture(null);
+                    }
+                    return registerVehicleEntryAsync(placa);
+                })
+                .thenAccept(success -> {
+                    if (success != null && success) {
+                        onRegistroSaved();
+                    }
+                })
+                .exceptionally(throwable -> {
+                    showToast("Erro ao processar entrada");
+                    return null;
+                });
+    }
 
-        RegistroCarro registro = new RegistroCarro();
-        registro.setPlaca(placa);
-        registro.setDataEntrada(new Date());
-        registro.setUsuarioEmail(usuarioEmail);
+    private CompletableFuture<Boolean> checkVehicleStatusAsync(String placa) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
 
+        repository.getByField("placa", placa, registros -> {
+            boolean isParked = registros.stream().anyMatch(registro -> !registro.hasAlreadyExited());
+            future.complete(isParked);
+        }).addOnFailureListener(future::completeExceptionally);
+
+        return future;
+    }
+
+    private CompletableFuture<Boolean> registerVehicleEntryAsync(String placa) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        RegistroCarro registro = createRegistro(placa);
 
         repository.save(registro, task ->
-            task.addOnSuccessListener(documentReference -> {
-                        Toast.makeText(getContext(), "Entrada registrada com sucesso", Toast.LENGTH_SHORT).show();
-                        editTextPlaca.setText("");
-                        carregarRegistros();
-                    })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(getContext(), "Erro ao registrar entrada", Toast.LENGTH_SHORT).show())
-
-        );
-    }
-
-    private void carregarRegistros() {
-        repository.getAll(lista -> {
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(() ->
-                    {
-                        lista.sort((o1, o2) -> o2.getDataEntrada().compareTo(o1.getDataEntrada()));
-                        adapter.updateData(lista);
-                    });
-                }
-            },
-            error -> Toast.makeText(getContext(), "Erro ao carregar registros", Toast.LENGTH_SHORT).show()
+                task.addOnSuccessListener(ref -> future.complete(true))
+                        .addOnFailureListener(future::completeExceptionally)
         );
 
+        return future;
     }
 
+    private void onRegistroSaved() {
+        showToast("Entrada registrada com sucesso");
+        editTextPlaca.setText("");
+        carregarRegistros();
+    }
+
+    // Exit Registration Logic
     private void onSaidaClick(RegistroCarro registro) {
         if (registro.getDataSaida() != null) {
-            Toast.makeText(getContext(), "Saída já registrada", Toast.LENGTH_SHORT).show();
+            showToast("Saída já registrada");
             return;
         }
 
@@ -146,14 +177,55 @@ public class RegistrarCarro extends Fragment {
                     registro.setDataSaida(new Date());
                     repository.updateByPlaca(registro.getPlaca(), registro)
                             .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(getContext(), "Saída registrada", Toast.LENGTH_SHORT).show();
+                                showToast("Saída registrada");
                                 carregarRegistros();
                             })
-                            .addOnFailureListener(e ->
-                                    Toast.makeText(getContext(), "Erro ao registrar saída", Toast.LENGTH_SHORT).show());
+                            .addOnFailureListener(e -> showToast("Erro ao registrar saída"));
                 },
                 null
         );
+    }
+
+    // Data Operations
+    private void carregarRegistros() {
+        repository.getAll(lista -> {
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(() ->
+                        {
+                            lista.sort((o1, o2) -> o2.getDataEntrada().compareTo(o1.getDataEntrada()));
+                            adapter.updateData(lista);
+                        });
+                    }
+                },
+                error -> showToast("Erro ao carregar registros")
+        );
+    }
+
+    // Validation Methods
+    private String getPlacaInput() {
+        return editTextPlaca.getText().toString().toUpperCase().trim();
+    }
+
+    private boolean isPlacaValid(String placa) {
+        if (TextUtils.isEmpty(placa)) {
+            showToast("Digite a placa do veículo");
+            return false;
+        }
+        return true;
+    }
+
+    // Object Creation
+    private RegistroCarro createRegistro(String placa) {
+        RegistroCarro registro = new RegistroCarro();
+        registro.setPlaca(placa);
+        registro.setDataEntrada(new Date());
+        registro.setUsuarioEmail(usuarioEmail);
+        return registro;
+    }
+
+    // UI Helper Methods
+    private void showToast(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     private void customDialogConfirmar(String titulo, String mensagem, Runnable confirmarAction, Runnable cancelarAction) {
@@ -191,5 +263,4 @@ public class RegistrarCarro extends Fragment {
 
         caixaAlert.show();
     }
-
 }
