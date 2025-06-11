@@ -2,9 +2,12 @@ package com.simuladomobile.simuladomobileJBS.repository;
 
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -12,6 +15,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class FirestoreRepository<T extends Serializable> {
@@ -48,24 +52,47 @@ public abstract class FirestoreRepository<T extends Serializable> {
         delete(documentId, result -> {});
     }
 
-    public void getAll(Consumer<List<T>> receiver, com.google.android.gms.tasks.OnFailureListener onErrorListener) {
-        getCollection().get().addOnCompleteListener(task -> {
+
+    protected T toObject(Task<? extends DocumentSnapshot> task) {
+        return task.getResult().toObject(this.clazz);
+    }
+
+    protected List<T> toObjectList(Task<? extends QuerySnapshot> task) {
+        return task.getResult().toObjects(this.clazz);
+    }
+
+    private <S, R> OnCompleteListener<S> buildCommonCompleteListener(
+            Consumer<R> receiver,
+            Function<Task<? extends S>, R> converter
+    ) {
+        return task -> {
             if (task.isSuccessful()) {
-                receiver.accept(task.getResult().toObjects(this.clazz));
+                receiver.accept(converter.apply(task));
             } else {
                 receiver.accept(null);
             }
-        }).addOnFailureListener(onErrorListener);
+        };
+    }
+    public void getAll(Consumer<List<T>> receiver, OnFailureListener onErrorListener) {
+        getCollection()
+                .get()
+                .addOnCompleteListener(buildCommonCompleteListener(receiver, task -> toObjectList(task)))
+                .addOnFailureListener(onErrorListener);
     }
 
     public void getById(String documentId, Consumer<T> receiver) {
-        getCollection().document(documentId).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                receiver.accept(task.getResult().toObject(this.clazz));
-            } else {
-                receiver.accept(null);
-            }
-        });
+        getCollection()
+                .document(documentId)
+                .get()
+                .addOnCompleteListener(buildCommonCompleteListener(receiver, task -> toObject(task)));
+    }
+
+    public <V> Task<QuerySnapshot> getByField(String key, V value, Consumer<List<T>> receiver) {
+        return getCollection()
+                .whereEqualTo(key, value)
+                .get()
+                .addOnCompleteListener(buildCommonCompleteListener(receiver, task -> toObjectList(task)));
+
     }
 
     protected <V> Task<Void> update(String key, V value, T object) throws RuntimeException {
