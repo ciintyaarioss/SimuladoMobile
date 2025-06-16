@@ -16,7 +16,7 @@
             android:layout_height="119dp"
             android:layout_marginTop="28dp"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/splash_logo"
+            android:src="@drawable/jbs_sem_fundo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
@@ -46,9 +46,10 @@
             android:paddingBottom="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.486"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buttonExcluir"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.411" />
 
         <Button
             android:id="@+id/buttonExcluir"
@@ -58,6 +59,7 @@
             android:backgroundTint="@color/purple_500"
             android:text="Excluir histórico do mês passado"
             android:textColor="#FFFFFF"
+            app:cornerRadius="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.494"
             app:layout_constraintStart_toStartOf="parent"
