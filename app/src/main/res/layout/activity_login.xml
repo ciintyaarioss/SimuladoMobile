@@ -5,7 +5,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     android:padding="32dp">
 
     <ImageView
@@ -51,7 +50,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
-            android:textColor="@color/black"
             tools:layout_editor_absoluteX="31dp"
             tools:layout_editor_absoluteY="408dp" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -90,7 +88,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
-            android:textColor="@color/black"
             tools:layout_editor_absoluteX="31dp"
             tools:layout_editor_absoluteY="331dp" />
     </com.google.android.material.textfield.TextInputLayout>

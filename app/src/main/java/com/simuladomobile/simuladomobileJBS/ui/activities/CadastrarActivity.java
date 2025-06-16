@@ -3,6 +3,7 @@ package com.simuladomobile.simuladomobileJBS.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import com.simuladomobile.simuladomobileJBS.model.Usuario;
 public class CadastrarActivity extends AppCompatActivity {
 
     private TextInputEditText edtNome, edtEmail, edtSenha;
+    private TextView tvJaTemConta;
     private Button btnCadastrar;
 
     @Override
@@ -28,6 +30,13 @@ public class CadastrarActivity extends AppCompatActivity {
         btnCadastrar = findViewById(R.id.btnCadastrar);
 
         btnCadastrar.setOnClickListener(v -> cadastrarUsuario());
+
+        tvJaTemConta = findViewById(R.id.tvJaTemConta);
+        tvJaTemConta.setOnClickListener(v -> {
+            Intent intent = new Intent(CadastrarActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        });
     }
 
     private void cadastrarUsuario() {
